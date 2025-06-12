@@ -1,0 +1,169 @@
+<div>
+  <tgui-root>
+    <div class="demo-container">
+      <header class="demo-header">
+        <tgui-large-title>{{ title }}</tgui-large-title>
+        <tgui-text>Demo application for Telegram Mini App using tgui-angular</tgui-text>
+      </header>
+
+      <main class="demo-content">
+        <!-- Settings (Tab 0) -->
+        <div *ngIf="selectedIndex === 0">
+          <tgui-section header="Interface Settings">
+            <tgui-list>
+              <tgui-cell 
+                title="🌙 Theme"
+                [subtitle]="isDarkTheme ? 'Dark' : 'Light'"
+                [afterTemplate]="themeSwitch">
+              </tgui-cell>
+              
+              <tgui-cell 
+                title="📱 Platform"
+                [subtitle]="isIOSPlatform ? 'iOS' : 'Base'"
+                [afterTemplate]="platformSwitch">
+              </tgui-cell>
+            </tgui-list>
+          </tgui-section>
+          
+          <tgui-section header="Debug">
+            <tgui-text>Current theme: {{ currentAppearance() }}</tgui-text>
+            <tgui-text>Current platform: {{ currentPlatform() }}</tgui-text>
+          </tgui-section>
+        </div>
+
+        <!-- Buttons (Tab 1) -->
+        <div *ngIf="selectedIndex === 1">
+          <tgui-section header="Button Sizes">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+              <tgui-button size="s">Small</tgui-button>
+              <tgui-button size="m">Medium</tgui-button>
+              <tgui-button size="l">Large</tgui-button>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="Button States">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <tgui-button [loading]="true">Loading</tgui-button>
+              </div>
+              <div>
+                <tgui-button [disabled]="true">Disabled</tgui-button>
+              </div>
+              <div style="width: 100%;">
+                <tgui-button [stretched]="true">Stretched button</tgui-button>
+              </div>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="Button Types">
+            <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+              <tgui-button mode="filled">Filled</tgui-button>
+              <tgui-button mode="bezeled">Bezeled</tgui-button>
+              <tgui-button mode="plain">Plain</tgui-button>
+              <tgui-button mode="gray">Gray</tgui-button>
+              <tgui-button mode="outline">Outline</tgui-button>
+              <tgui-button mode="white">White</tgui-button>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="Buttons with Icons">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <tgui-button>
+                <tgui-icon28-devices></tgui-icon28-devices>
+                With devices icon
+              </tgui-button>
+              <tgui-button mode="bezeled">
+                <tgui-icon28-chat></tgui-icon28-chat>
+                With chat icon
+              </tgui-button>
+              <tgui-button mode="plain">
+                <tgui-icon28-stats></tgui-icon28-stats>
+                With stats icon
+              </tgui-button>
+            </div>
+          </tgui-section>
+        </div>
+
+        <!-- Components (Tab 2) -->
+        <div *ngIf="selectedIndex === 2">
+          <tgui-section header="Forms">
+            <tgui-input placeholder="Enter text"></tgui-input>
+          </tgui-section>
+
+          <tgui-section header="Elements">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <tgui-avatar [initials]="'JD'"></tgui-avatar>
+              <tgui-badge type="number">5</tgui-badge>
+              <tgui-switch [checked]="true"></tgui-switch>
+            </div>
+          </tgui-section>
+        </div>
+
+        <!-- List (Tab 3) -->
+        <div *ngIf="selectedIndex === 3">
+          <tgui-section header="List Items">
+            <tgui-list>
+              <tgui-cell 
+                title="First Item" 
+                subtitle="First item description"
+                [beforeTemplate]="avatarTemplate">
+              </tgui-cell>
+              <tgui-cell 
+                title="Second Item" 
+                subtitle="Second item description"
+                [afterTemplate]="badgeTemplate">
+              </tgui-cell>
+              <tgui-cell 
+                title="Third Item" 
+                [propagateEvents]="true"
+                subtitle="With switch"
+                [afterTemplate]="switchTemplate">
+              </tgui-cell>
+            </tgui-list>
+          </tgui-section>
+        </div>
+      </main>
+
+      <!-- Tabbar -->
+      <tgui-tabbar [selectedIndex]="selectedIndex" (selectedIndexChange)="selectedIndex = $event">
+        <tgui-tabbar-item text="Settings">
+          <tgui-icon28-devices></tgui-icon28-devices>
+        </tgui-tabbar-item>
+
+        <tgui-tabbar-item text="Buttons">
+          <tgui-icon28-edit></tgui-icon28-edit>
+        </tgui-tabbar-item>
+
+        <tgui-tabbar-item text="Components">
+          <tgui-icon28-chat></tgui-icon28-chat>
+        </tgui-tabbar-item>
+
+        <tgui-tabbar-item text="List">
+          <tgui-icon28-stats></tgui-icon28-stats>
+        </tgui-tabbar-item>
+      </tgui-tabbar>
+    </div>
+
+    <!-- Templates for settings -->
+    <ng-template #themeSwitch>
+      <tgui-switch [checked]="isDarkTheme" (change)="toggleTheme()"></tgui-switch>
+    </ng-template>
+
+    <ng-template #platformSwitch>
+      <tgui-switch [checked]="isIOSPlatform" (change)="togglePlatform()"></tgui-switch>
+    </ng-template>
+
+    <!-- Templates for list -->
+    <ng-template #avatarTemplate>
+      <tgui-avatar [initials]="'JD'"></tgui-avatar>
+    </ng-template>
+
+    <ng-template #badgeTemplate>
+      <tgui-badge type="number">5</tgui-badge>
+    </ng-template>
+
+    <ng-template #switchTemplate>
+      <tgui-switch [checked]="true"></tgui-switch>
+    </ng-template>
+  </tgui-root>
+</div>
