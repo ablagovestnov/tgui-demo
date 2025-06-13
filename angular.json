@@ -21,10 +21,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/tgui-demo/browser",
+            "outputPath": "dist/tgui-demo",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "baseHref": "/tgui-demo/",
             "polyfills": [
               "zone.js"
             ],

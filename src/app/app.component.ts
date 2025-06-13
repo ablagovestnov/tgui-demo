@@ -1,4 +1,4 @@
-import { Component, inject, computed, OnInit, effect } from '@angular/core';
+import { Component, inject, computed, OnInit, signal, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   RootComponent, 
@@ -14,15 +14,40 @@ import {
   CellComponent,
   TabbarComponent,
   TabbarItemComponent,
-  TguiIcon28Devices,
   TguiIcon28Chat,
   TguiIcon28Stats,
   TguiIcon28Edit,
+  TguiIcon28Heart,
+  TguiIcon28Archive,
   ThemeService,
   PlatformService,
   AppearanceType,
-  PlatformType
+  PlatformType,
+  AvatarBadgeComponent,
+  AvatarAcronymComponent,
+  TappableComponent,
+  TguiIcon16Cancel,
+  TguiDynamicIconComponent,
+  ProgressComponent,
+  CardComponent,
+  SnackbarComponent
 } from 'tgui-angular';
+
+interface ShowcaseCard {
+  icon: string;
+  iconClass: string;
+  title: string;
+  subtitle?: string;
+  badge?: {
+    type: 'number';
+    value: string | number;
+  };
+  progress?: number;
+  action: {
+    text: string;
+    type: string;
+  };
+}
 
 @Component({
   selector: 'app-root',
@@ -37,72 +62,148 @@ import {
     ListComponent,
     InputComponent,
     AvatarComponent,
+    AvatarBadgeComponent,
     BadgeComponent,
     SwitchComponent,
     CellComponent,
     TabbarComponent,
     TabbarItemComponent,
-    TguiIcon28Devices,
     TguiIcon28Chat,
     TguiIcon28Stats,
-    TguiIcon28Edit
+    TguiIcon28Edit,
+    TguiIcon28Heart,
+    TguiIcon28Archive,
+    TappableComponent,
+    TguiIcon16Cancel,
+    TguiDynamicIconComponent,
+    ProgressComponent,
+    CardComponent,
+    SnackbarComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'TGUI Angular Demo';
-  selectedIndex = 0;
+  selectedIndex = 0;  // Starting with Showcase tab
+  
+  // Showcase cards data
+  showcaseCards: ShowcaseCard[] = [
+    {
+      icon: 'heart',
+      iconClass: 'premium',
+      title: 'Premium',
+      badge: {
+        type: 'number',
+        value: 'PRO'
+      },
+      action: {
+        text: 'Try Premium',
+        type: 'Premium'
+      }
+    },
+    {
+      icon: 'chat',
+      iconClass: 'messages',
+      title: 'Messages',
+      subtitle: '5 unread',
+      badge: {
+        type: 'number',
+        value: 5
+      },
+      action: {
+        text: 'Open Chat',
+        type: 'Messages'
+      }
+    },
+    {
+      icon: 'archive',
+      iconClass: 'achievements',
+      title: 'Achievements',
+      progress: 75,
+      action: {
+        text: 'View All',
+        type: 'Achievements'
+      }
+    }
+  ];
+  
+  // Input handling
+  value = signal('');
   
   // Инжектируем сервисы
   themeService = inject(ThemeService);
   platformService = inject(PlatformService);
   
   // Computed свойства для реактивного отслеживания изменений
-  currentAppearance = computed(() => this.themeService.appearance());
   currentPlatform = computed(() => this.platformService.platform());
+  currentAppearance = computed(() => this.themeService.appearance());
   
-  constructor() {
-    // Эффект для отслеживания изменений темы
-    effect(() => {
-      console.log('Theme changed to:', this.currentAppearance());
-    });
-    
-    // Эффект для отслеживания изменений платформы
-    effect(() => {
-      console.log('Platform changed to:', this.currentPlatform());
-    });
-  }
+  private viewContainerRef = inject(ViewContainerRef);
+  private activeSnackbar?: { component: any; timeout: any };
+  
+  constructor() {}
   
   ngOnInit(): void {
-    console.log('App initialized');
-    console.log('Initial theme:', this.currentAppearance());
-    console.log('Initial platform:', this.currentPlatform());
-    
     // Инициализируем тему
     this.themeService.setupTheme();
   }
   
-  // Переключение темы
-  toggleTheme(): void {
-    const newTheme: AppearanceType = this.currentAppearance() === 'light' ? 'dark' : 'light';
-    console.log('Toggling theme to:', newTheme);
-    this.themeService.setTheme(newTheme, false);
+  // Обработчик смены вкладки
+  onTabChange(index: number): void {
+    this.selectedIndex = index;
   }
-  
-  // Переключение платформы
-  togglePlatform(): void {
-    const newPlatform: PlatformType = this.currentPlatform() === 'base' ? 'ios' : 'base';
-    console.log('Toggling platform to:', newPlatform);
-    this.platformService.setPlatform(newPlatform);
+
+  // Input handlers
+  onInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.value.set(input.value);
   }
-  
-  // Геттеры для отображения текущих настроек
-  get isDarkTheme(): boolean {
-    return this.currentAppearance() === 'dark';
+
+  clearInput(): void {
+    this.value.set('');
   }
-  
-  get isIOSPlatform(): boolean {
-    return this.currentPlatform() === 'ios';
+
+  // Showcase handlers
+  showNotification(type: string): void {
+    // Clear existing snackbar if any
+    if (this.activeSnackbar) {
+      clearTimeout(this.activeSnackbar.timeout);
+      this.activeSnackbar.component.destroy();
+    }
+
+    // Create new snackbar
+    const componentRef = this.viewContainerRef.createComponent(SnackbarComponent);
+    componentRef.instance.duration = 3000;
+    
+    switch (type) {
+      case 'Premium':
+        componentRef.instance.description = 'Try our premium features!';
+        break;
+      case 'Messages':
+        componentRef.instance.description = 'You have 5 unread messages';
+        break;
+      case 'Achievements':
+        componentRef.instance.description = 'Check out your achievements progress';
+        break;
+      default:
+        componentRef.instance.description = 'Notification';
+    }
+
+    // Set up auto-close
+    const timeout = setTimeout(() => {
+      componentRef.destroy();
+      this.activeSnackbar = undefined;
+    }, componentRef.instance.duration);
+
+    // Store reference to active snackbar
+    this.activeSnackbar = {
+      component: componentRef,
+      timeout
+    };
+  }
+
+  showShareOptions(): void {
+    console.log('Share options clicked');
   }
 }

@@ -7,27 +7,116 @@
       </header>
 
       <main class="demo-content">
-        <!-- Settings (Tab 0) -->
+        <!-- Showcase (Tab 0) -->
         <div *ngIf="selectedIndex === 0">
-          <tgui-section header="Interface Settings">
+          <tgui-section header="Interactive Cards">
+            <div class="showcase-cards">
+              <tgui-card *ngFor="let card of showcaseCards">
+                <tgui-cell
+                  [title]="card.title"
+                  [subtitle]="card.subtitle"
+                  [beforeTemplate]="iconTemplate"
+                  [titleBadge]="card.badge ? badgeTemplate : null"
+                  >
+                  <ng-template #iconTemplate>
+                    <div [class]="'card-icon ' + card.iconClass">
+                      <ng-container [ngSwitch]="card.icon">
+                        <tgui-icon28-heart *ngSwitchCase="'heart'"></tgui-icon28-heart>
+                        <tgui-icon28-chat *ngSwitchCase="'chat'"></tgui-icon28-chat>
+                        <tgui-icon28-archive *ngSwitchCase="'archive'"></tgui-icon28-archive>
+                      </ng-container>
+                    </div>
+                  </ng-template>
+                  <ng-template #badgeTemplate>
+                    <tgui-badge [type]="card.badge!.type">{{ card.badge!.value }}</tgui-badge>
+                  </ng-template>
+                </tgui-cell>
+                <tgui-cell (click)="showNotification(card.action.type)">
+                  {{ card.action.text }}
+                </tgui-cell>
+              </tgui-card>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="User Profiles">
+            <div class="showcase-profiles">
+              <tgui-cell 
+                title="John Developer"
+                subtitle="Senior Software Engineer"
+                [beforeTemplate]="johnAvatar"
+                [afterTemplate]="johnBadges">
+              </tgui-cell>
+
+              <tgui-cell 
+                title="Alice Designer"
+                subtitle="UI/UX Lead"
+                [beforeTemplate]="aliceAvatar"
+                [afterTemplate]="aliceBadges">
+              </tgui-cell>
+
+              <tgui-cell 
+                title="Team Chat"
+                subtitle="8 members online"
+                [beforeTemplate]="teamAvatar"
+                [afterTemplate]="teamStatus">
+              </tgui-cell>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="Interactive Elements">
+            <div class="showcase-interactive">
+              <div class="interactive-group">
+                <tgui-button mode="filled" size="l" [icon]="'tgui-icon28-heart'">
+                  Like Project
+                </tgui-button>
+                <tgui-badge type="number">128</tgui-badge>
+              </div>
+
+              <div class="interactive-group">
+                <tgui-button mode="bezeled" [icon]="'tgui-icon28-chat'" (click)="showShareOptions()">
+                  Share
+                </tgui-button>
+              </div>
+            </div>
+          </tgui-section>
+
+          <tgui-section header="Avatar">
+            <tgui-cell>
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <tgui-avatar size="l" src="https://randomuser.me/api/portraits/men/32.jpg">
+                  <tgui-avatar-badge [count]="5"></tgui-avatar-badge>
+                </tgui-avatar>
+                
+                <tgui-avatar size="l" initials="John Doe">
+                  <tgui-avatar-badge [count]="42"></tgui-avatar-badge>
+                </tgui-avatar>
+                
+                <tgui-avatar size="l" initials="Overflow" color="#e91e63">
+                  <tgui-avatar-badge [count]="999"></tgui-avatar-badge>
+                </tgui-avatar>
+              </div>
+            </tgui-cell>
+          </tgui-section>
+
+          <tgui-section header="List Items">
             <tgui-list>
               <tgui-cell 
-                title="🌙 Theme"
-                [subtitle]="isDarkTheme ? 'Dark' : 'Light'"
-                [afterTemplate]="themeSwitch">
+                title="First Item" 
+                subtitle="First item description"
+                [beforeTemplate]="avatarTemplate">
               </tgui-cell>
-              
               <tgui-cell 
-                title="📱 Platform"
-                [subtitle]="isIOSPlatform ? 'iOS' : 'Base'"
-                [afterTemplate]="platformSwitch">
+                title="Second Item" 
+                subtitle="Second item description"
+                [afterTemplate]="badgeTemplate">
+              </tgui-cell>
+              <tgui-cell 
+                title="Third Item" 
+                [propagateEvents]="true"
+                subtitle="With switch"
+                [afterTemplate]="switchTemplate">
               </tgui-cell>
             </tgui-list>
-          </tgui-section>
-          
-          <tgui-section header="Debug">
-            <tgui-text>Current theme: {{ currentAppearance() }}</tgui-text>
-            <tgui-text>Current platform: {{ currentPlatform() }}</tgui-text>
           </tgui-section>
         </div>
 
@@ -68,16 +157,13 @@
 
           <tgui-section header="Buttons with Icons">
             <div style="display: flex; flex-direction: column; gap: 16px;">
-              <tgui-button>
-                <tgui-icon28-devices></tgui-icon28-devices>
+              <tgui-button [icon]="'tgui-icon28-devices'">
                 With devices icon
               </tgui-button>
-              <tgui-button mode="bezeled">
-                <tgui-icon28-chat></tgui-icon28-chat>
+              <tgui-button mode="bezeled" [icon]="'tgui-icon28-chat'">
                 With chat icon
               </tgui-button>
-              <tgui-button mode="plain">
-                <tgui-icon28-stats></tgui-icon28-stats>
+              <tgui-button mode="plain" [icon]="'tgui-icon28-stats'">
                 With stats icon
               </tgui-button>
             </div>
@@ -86,38 +172,129 @@
 
         <!-- Components (Tab 2) -->
         <div *ngIf="selectedIndex === 2">
-          <tgui-section header="Forms">
-            <tgui-input placeholder="Enter text"></tgui-input>
+          <tgui-section header="Form Components">
+            <tgui-list class="form-list">
+              <tgui-input
+                header="Input"
+                placeholder="I am usual input, just leave me alone"
+              ></tgui-input>
+              
+              <tgui-input
+                status="error"
+                header="Input"
+                placeholder="I am error input, don't make my mistakes..."
+              ></tgui-input>
+              
+              <tgui-input
+                status="focused"
+                header="Input"
+                placeholder="I am focused input, are u focused on me?"
+              ></tgui-input>
+              
+              <tgui-input
+                [disabled]="true"
+                header="Input"
+                placeholder="I am disabled input"
+              ></tgui-input>
+              
+              <ng-template #clearButtonTemplate>
+                <tgui-tappable 
+                  class="clear-button"
+                  (click)="clearInput()"
+                >
+                  <tgui-icon16-cancel></tgui-icon16-cancel>
+                </tgui-tappable>
+              </ng-template>
+              
+              <tgui-input
+                status="focused"
+                header="Input with clear button"
+                placeholder="Write and clean me"
+                [value]="value()"
+                [after]="clearButtonTemplate"
+                (input)="onInput($event)"
+              ></tgui-input>
+              
+              <tgui-input
+                header="Input with before content"
+                placeholder="Input with icon before"
+                [before]="'$'"
+              ></tgui-input>
+              
+              <ng-template #searchIcon>
+                <div class="search-icon-wrapper">
+                  <tgui-dynamic-icon icon="search-24"></tgui-dynamic-icon>
+                </div>
+              </ng-template>
+              
+              <tgui-input
+                header="Input with before template"
+                placeholder="Search something..."
+                [before]="searchIcon"
+              ></tgui-input>
+            </tgui-list>
           </tgui-section>
 
-          <tgui-section header="Elements">
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-              <tgui-avatar [initials]="'JD'"></tgui-avatar>
-              <tgui-badge type="number">5</tgui-badge>
-              <tgui-switch [checked]="true"></tgui-switch>
-            </div>
-          </tgui-section>
         </div>
 
-        <!-- List (Tab 3) -->
+        <!-- Wallet (Tab 3) -->
         <div *ngIf="selectedIndex === 3">
-          <tgui-section header="List Items">
+          <header class="wallet-header">
+            <tgui-large-title>Wallet Balance</tgui-large-title>
+            <div class="wallet-balance">
+              <tgui-text>27,530.78 ₽</tgui-text>
+            </div>
+          </header>
+
+          <div class="wallet-actions">
+            <div class="action-grid">
+              <tgui-button mode="plain" [icon]="'tgui-icon28-arrow-up'" [stretched]="true">
+                Send
+              </tgui-button>
+              <tgui-button mode="plain" [icon]="'tgui-icon28-add'" [stretched]="true">
+                Top Up
+              </tgui-button>
+              <tgui-button mode="plain" [icon]="'tgui-icon28-exchange'" [stretched]="true">
+                Exchange
+              </tgui-button>
+              <tgui-button mode="plain" [icon]="'tgui-icon28-shop'" [stretched]="true">
+                P2P Market
+              </tgui-button>
+            </div>
+          </div>
+
+          <tgui-section>
             <tgui-list>
               <tgui-cell 
-                title="First Item" 
-                subtitle="First item description"
-                [beforeTemplate]="avatarTemplate">
+                title="Dollars"
+                subtitle="79.83 ₽ ↓ 0.23%"
+                [beforeTemplate]="usdTemplate"
+                after="7.98 ₽">
+                <div class="currency-cell-subtitle-after">0.09 USDT</div>
               </tgui-cell>
+              
               <tgui-cell 
-                title="Second Item" 
-                subtitle="Second item description"
-                [afterTemplate]="badgeTemplate">
+                title="Toncoin"
+                subtitle="239.58 ₽ ↓ 3.37%"
+                [beforeTemplate]="tonTemplate"
+                after="0.00 ₽">
+                <div class="currency-cell-subtitle-after">0 TON</div>
               </tgui-cell>
+
               <tgui-cell 
-                title="Third Item" 
-                [propagateEvents]="true"
-                subtitle="With switch"
-                [afterTemplate]="switchTemplate">
+                title="Bitcoin"
+                subtitle="8,412,672.62 ₽ ↓ 1.11%"
+                [beforeTemplate]="btcTemplate"
+                after="5,663.41 ₽">
+                <div class="currency-cell-subtitle-after">0.0006732 BTC</div>
+              </tgui-cell>
+
+              <tgui-cell 
+                title="Notcoin"
+                subtitle="0.1637 ₽ ↓ 4.72%"
+                [beforeTemplate]="notTemplate"
+                after="824.81 ₽">
+                <div class="currency-cell-subtitle-after">5,037 NOT</div>
               </tgui-cell>
             </tgui-list>
           </tgui-section>
@@ -125,9 +302,9 @@
       </main>
 
       <!-- Tabbar -->
-      <tgui-tabbar [selectedIndex]="selectedIndex" (selectedIndexChange)="selectedIndex = $event">
-        <tgui-tabbar-item text="Settings">
-          <tgui-icon28-devices></tgui-icon28-devices>
+      <tgui-tabbar [selectedIndex]="selectedIndex" (selectedIndexChange)="onTabChange($event)">
+        <tgui-tabbar-item text="Showcase">
+          <tgui-icon28-heart></tgui-icon28-heart>
         </tgui-tabbar-item>
 
         <tgui-tabbar-item text="Buttons">
@@ -138,20 +315,14 @@
           <tgui-icon28-chat></tgui-icon28-chat>
         </tgui-tabbar-item>
 
-        <tgui-tabbar-item text="List">
-          <tgui-icon28-stats></tgui-icon28-stats>
+        <tgui-tabbar-item text="Wallet">
+          <svg viewBox="0 0 28 28" width="28" height="28" style="fill: currentColor;">
+            <path d="M19.5 16a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM22 8h-1V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2h1a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-3 14H7V6h12v2H8v2h11v12zm3-4h-1V10h1v8z"/>
+          </svg>
         </tgui-tabbar-item>
+
       </tgui-tabbar>
     </div>
-
-    <!-- Templates for settings -->
-    <ng-template #themeSwitch>
-      <tgui-switch [checked]="isDarkTheme" (change)="toggleTheme()"></tgui-switch>
-    </ng-template>
-
-    <ng-template #platformSwitch>
-      <tgui-switch [checked]="isIOSPlatform" (change)="togglePlatform()"></tgui-switch>
-    </ng-template>
 
     <!-- Templates for list -->
     <ng-template #avatarTemplate>
@@ -164,6 +335,77 @@
 
     <ng-template #switchTemplate>
       <tgui-switch [checked]="true"></tgui-switch>
+    </ng-template>
+
+    <!-- Templates for wallet -->
+    <ng-template #usdTemplate>
+      <div class="currency-icon usd">$</div>
+    </ng-template>
+
+    <ng-template #tonTemplate>
+      <div class="currency-icon ton">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm.974-15.825L16.415 8.2l-3.441 2.442-3.441-2.442 3.441-2.025zM7.85 9.036v3.091l2.675 1.897v2.821l-4.982-3.393V9.744l2.307-0.708zm8.3 0v3.091l-2.675 1.897v2.821l4.982-3.393V9.744L16.15 9.036z"/>
+        </svg>
+      </div>
+    </ng-template>
+
+    <ng-template #btcTemplate>
+      <div class="currency-icon btc">₿</div>
+    </ng-template>
+
+    <ng-template #notTemplate>
+      <div class="currency-icon not">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+          <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.236L19.09 8 12 11.764 4.91 8 12 4.236zM4 9.618v6.764L11 19v-6.764L4 9.618zm16 0l-7 2.618V19l7-2.618V9.618z"/>
+        </svg>
+      </div>
+    </ng-template>
+
+    <!-- Templates for Showcase -->
+    <ng-template #johnAvatar>
+      <tgui-avatar 
+        size="l"
+        src="https://i.pravatar.cc/300?img=8"
+        [online]="true">
+      </tgui-avatar>
+    </ng-template>
+
+    <ng-template #johnBadges>
+      <div class="badge-group">
+                  <tgui-badge type="number">PRO</tgui-badge>
+          <tgui-badge type="number">12</tgui-badge>
+      </div>
+    </ng-template>
+
+    <ng-template #aliceAvatar>
+      <tgui-avatar 
+        size="l"
+        src="https://i.pravatar.cc/300?img=5"
+        [online]="true">
+      </tgui-avatar>
+    </ng-template>
+
+    <ng-template #aliceBadges>
+      <div class="badge-group">
+                  <tgui-badge type="number">LEAD</tgui-badge>
+          <tgui-badge type="number">NEW</tgui-badge>
+      </div>
+    </ng-template>
+
+    <ng-template #teamAvatar>
+      <tgui-avatar 
+        size="l"
+        color="#2196F3"
+        initials="TC">
+        <tgui-avatar-badge [count]="8"></tgui-avatar-badge>
+      </tgui-avatar>
+    </ng-template>
+
+    <ng-template #teamStatus>
+      <tgui-button mode="plain" [icon]="'tgui-icon28-chat'">
+        Join
+      </tgui-button>
     </ng-template>
   </tgui-root>
 </div>
