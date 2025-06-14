@@ -29,6 +29,7 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "preserveSymlinks": true,
             "assets": [
               {
                 "glob": "**/*",
@@ -74,7 +75,13 @@
               "buildTarget": "tgui-demo:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "port": 4200,
+            "host": "0.0.0.0",
+            "hmr": true,
+            "allowedHosts": ["localhost", ".ngrok-free.app", ".ngrok.io"]
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

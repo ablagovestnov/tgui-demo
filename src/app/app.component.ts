@@ -30,8 +30,33 @@ import {
   TguiDynamicIconComponent,
   ProgressComponent,
   CardComponent,
-  SnackbarComponent
+  SnackbarComponent,
+  TelegramService
 } from 'tgui-angular';
+
+// Define Telegram WebApp types
+interface WebApp {
+  isExpanded?: boolean;
+  initData?: string;
+  initDataUnsafe?: any;
+  version?: string;
+  platform?: string;
+  colorScheme?: string;
+  themeParams?: any;
+  viewportHeight?: number;
+  viewportStableHeight?: number;
+  MainButton?: any;
+  BackButton?: any;
+  ready: () => void;
+  expand: () => void;
+  close: () => void;
+  onEvent: (eventType: string, eventHandler: (...args: any[]) => void) => void;
+  offEvent: (eventType: string, eventHandler: (...args: any[]) => void) => void;
+  sendData: (data: any) => void;
+  enableClosingConfirmation: () => void;
+  disableClosingConfirmation: () => void;
+}
+
 
 interface ShowcaseCard {
   icon: string;
@@ -78,7 +103,7 @@ interface ShowcaseCard {
     TguiDynamicIconComponent,
     ProgressComponent,
     CardComponent,
-    SnackbarComponent
+    SnackbarComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -141,8 +166,31 @@ export class AppComponent implements OnInit {
   
   private viewContainerRef = inject(ViewContainerRef);
   private activeSnackbar?: { component: any; timeout: any };
+   
+  private telegram = inject(TelegramService);
   
-  constructor() {}
+  constructor() {
+    // Subscribe to Telegram WebApp readiness
+    this.telegram.isReady$.subscribe(isReady => {
+      if (isReady) {
+        const tg = this.telegram.getTelegramData();
+        if (tg) {
+          console.log('Telegram WebApp is available 111112222');
+          console.log('Color Scheme:', tg.colorScheme);
+          console.log('Theme Params:', tg.themeParams);
+          
+          // Subscribe to events
+          tg.onEvent('message', this.handleTelegramMessage);
+          tg.onEvent('mainButtonClicked', this.handleMainButtonClick);
+          tg.onEvent('viewportChanged', this.handleViewportChange);
+          tg.onEvent('themeChanged', () => console.log('Theme changed DEMO'));
+
+        }
+      } else {
+        console.warn('Telegram WebApp is not available. Are you running this in Telegram?');
+      }
+    });
+  }
   
   ngOnInit(): void {
     // Инициализируем тему
@@ -206,4 +254,26 @@ export class AppComponent implements OnInit {
   showShareOptions(): void {
     console.log('Share options clicked');
   }
+
+  // Telegram message handlers
+  private handleTelegramMessage = () => {
+    console.log('Received Telegram message');
+    // You can add UI notification here using SnackbarComponent
+    const componentRef = this.viewContainerRef.createComponent(SnackbarComponent);
+    componentRef.instance.description = 'New message received';
+    componentRef.instance.duration = 3000;
+    
+    setTimeout(() => {
+      componentRef.destroy();
+    }, 3000);
+  };
+
+  private handleMainButtonClick = () => {
+    console.log('Main button clicked');
+  };
+
+  private handleViewportChange = () => {
+    console.log('Viewport changed');
+  };
+
 }

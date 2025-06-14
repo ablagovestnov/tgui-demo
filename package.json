@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:clean": "rm -rf .angular/cache && ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -23,7 +24,7 @@
     "i": "^0.3.7",
     "npm": "^11.4.1",
     "rxjs": "~7.8.0",
-    "tgui-angular": "^2.2.0",
+    "tgui-angular": "^2.2.12",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
@@ -38,6 +39,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.2",
+    "vite": "^6.0.8"
   }
 }
